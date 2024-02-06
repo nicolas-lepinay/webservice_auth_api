@@ -20,7 +20,7 @@ exports.ensureAdmin = (req, res, next) => {
 };
 
 exports.ensureSelfOrAdmin = (req, res, next) => {
-    if (req.user && (req.user.id === req.params.uid || req.params.uid === 'me' || req.user.roles.includes('ROLE_ADMIN'))) {
+    if (req.user && (req.user.uid === req.params.uid || req.params.uid === 'me' || req.user.roles.includes('ROLE_ADMIN'))) {
         return next();
     }
     return res.status(403).json({ message: "Accès refusé : vous ne pouvez accéder qu'à votre propre compte, sauf si vous êtes administrateur." });
