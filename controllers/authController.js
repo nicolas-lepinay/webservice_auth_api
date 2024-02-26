@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const { generateToken, generateRefreshToken } = require('../utils/tokenUtils');
 const { v4: uuidv4 } = require('uuid');
+const amqp = require("amqplib");
 
 exports.register = async (req, res) => {
     try {
@@ -54,6 +55,20 @@ exports.login = async (req, res) => {
 
         const token = generateToken(user);
         const refreshToken = generateRefreshToken(user);
+
+        // Send message to rabbit mq
+        const msg = {
+            login : login
+        }
+
+        console.log("Send message to rabbit MQ");
+        const amqpServer = "amqp://guest:guest@172.17.0.4:5672"
+        const connection = await amqp.connect(amqpServer)
+        const channel = await connection.createChannel();
+        await channel.assertQueue("login-queue");
+        await channel.sendToQueue("login-queue", Buffer.from(JSON.stringify(msg)))
+        await channel.close();
+        await connection.close();
 
         res.status(201).json({ accessToken: token, accessTokenExpiresAt: new Date(Date.now() + 3600000), refreshToken, refreshTokenExpiresAt: new Date(Date.now() + 86400000) });
     } catch (error) {
