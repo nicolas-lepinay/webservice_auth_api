@@ -1,0 +1,22 @@
+# Ignorer le dossier node_modules pour utiliser les couches de cache de manière plus efficace
+node_modules
+
+# Ignorer les fichiers de configuration de l'environnement local qui ne devraient pas être inclus dans l'image Docker. Les inclure dans le fichier docker-compose.yml
+.env
+
+# Ignorer le dossier .git et autres fichiers liés à git
+.git
+.gitignore
+
+# Ignorer les fichiers de documentation et de notes qui ne sont pas nécessaires à l'exécution de l'application
+doc
+*.md
+
+# Ignorer les dossiers ou fichiers spécifiques aux éditeurs de texte
+*.log
+*.sublime*
+*.vscode*
+*.idea*
+
+# Ignorer les fichiers de sauvegarde qui sont souvent générés par des éditeurs de texte
+*~

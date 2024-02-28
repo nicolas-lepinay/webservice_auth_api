@@ -1,20 +1,20 @@
 # Utiliser une image de node.js comme base
-FROM node:21
+FROM node:20-slim
 
 # Définir le répertoire de travail dans le conteneur
-WORKDIR /
+WORKDIR /app
 
-# Copier le fichier package.json et package-lock.json
-COPY package*.json ./
+# Copier les fichiers package.json et package-lock.json
+COPY src/package*.json ./
 
 # Installer les dépendances
-RUN npm install
+RUN npm install --production
 
 # Copier le reste des fichiers de l'application
-COPY . .
+COPY src/ .
 
 # Exposer le port sur lequel votre application Express écoute
-EXPOSE 3000
+EXPOSE 3001
 
 # Commande pour exécuter votre application
-CMD ["npm", "start"]
+CMD ["node", "index.js"]
