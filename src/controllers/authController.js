@@ -6,10 +6,10 @@ const { v4: uuidv4 } = require('uuid');
 
 exports.register = async (req, res) => {
     try {
-        const { login, password, roles, status } = req.body;
+        const { login, email, password, roles, status } = req.body;
 
         // Check if user exists
-        const userExists = await User.findOne({ login });
+        const userExists = await User.findOne({ $or: [{ login: login }, { email: email }] });
         if (userExists) {
             return res.status(422).json({error: { code: 422, message: "Cet utilisateur existe déjà."}});
         }
@@ -18,6 +18,7 @@ exports.register = async (req, res) => {
         const newUser = new User({
             uid: uuidv4(),
             login,
+            email,
             password,
             roles: roles || ['ROLE_USER'],
             status: status || 'open',
@@ -29,6 +30,7 @@ exports.register = async (req, res) => {
         res.status(201).json({
             uid: savedUser.uid,
             login: savedUser.login,
+            email: savedUser.email,
             roles: savedUser.roles,
             status: savedUser.status,
             createdAt: savedUser.createdAt,
@@ -143,12 +145,24 @@ exports.getAccount = async (req, res) => {
     }
 };
 
+// Récupération de tous les comptes utilisateurs
+exports.getAllAccounts = async (req, res) => {
+    try {
+        const users = await User.find();
+
+        // Vérifier les rôles ici, si nécessaire.
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({error: { code: 500, message: error.message }});
+    }
+};
+
 // Modification d'un compte utilisateur
 exports.updateUser = async (req, res) => {
     try {
         // Le mot-clé 'me' est remplacé par l'UID de l'utilisateur actuel, sinon on utilise l'UID fourni.
         const userUid = req.params.uid === 'me' ? req.user.uid : req.params.uid;
-        const userToUpdate = await  User.findOne({ uid: uid});
+        const userToUpdate = await  User.findOne({ uid: userUid});
 
         if (!userToUpdate) {
             return res.status(404).json({error: { code: 404, message: "Aucun utilisateur trouvé." }});
@@ -183,4 +197,6 @@ exports.updateUser = async (req, res) => {
         res.status(500).json({error: { code: 500, message: error.message }});
     }
 };
+
+
 
