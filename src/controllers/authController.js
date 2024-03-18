@@ -136,6 +136,7 @@ exports.getAccount = async (req, res) => {
         res.status(200).json({
             uid: user.uid,
             login: user.login,
+            email: user.email,
             roles: user.roles,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt
@@ -149,9 +150,7 @@ exports.getAccount = async (req, res) => {
 exports.getAllAccounts = async (req, res) => {
     try {
         const users = await User.find();
-
-        // Vérifier les rôles ici, si nécessaire.
-        res.status(200).json(users);
+        return res.status(200).json(users);
     } catch (error) {
         res.status(500).json({error: { code: 500, message: error.message }});
     }
@@ -188,6 +187,7 @@ exports.updateUser = async (req, res) => {
         res.status(200).json({
             uid: updatedUser.uid,
             login: updatedUser.login,
+            email: updatedUser.email,
             roles: updatedUser.roles,
             status: updatedUser.status,
             createdAt: updatedUser.createdAt,

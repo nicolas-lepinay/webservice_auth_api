@@ -7,6 +7,7 @@ exports.authenticate = (req, res, next) => {
     const token = header.split(" ")[1];
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json("Le token est invalide.");
+        user.token = token;
         req.user = user;
         next();
     });
